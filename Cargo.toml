@@ -1,0 +1,15 @@
+[package]
+name = "onum"
+version = "0.1.0"
+authors = ["Maxwell Nogueira Peixoto <maxwellpxt@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "Numerical utilities for Python"
+keywords = ["python", "array"]
+edition = "2021"
+
+[lib]
+name = "onum"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.17", features = ["extension-module"] }
