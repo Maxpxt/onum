@@ -1,3 +1,4 @@
+mod utils;
 #[macro_use]
 mod ufunc;
 mod abs2;

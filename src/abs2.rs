@@ -1,9 +1,12 @@
-use crate::ufunc::{BuiltInType::*, Identity, UFuncMetadata};
+use crate::{
+    ufunc::{BuiltInType::*, Identity, UFuncMetadata},
+    utils::{is_aligned, is_contiguous},
+};
 use core::slice;
 use cstr::cstr;
 use numpy::npyffi::npy_intp;
 use std::{
-    mem, ops,
+    ops,
     os::raw::{
         c_char, c_double, c_float, c_int, c_long, c_longlong, c_short, c_uint, c_ulong,
         c_ulonglong, c_ushort, c_void,
@@ -44,9 +47,8 @@ pub unsafe extern "C" fn abs2_real<T>(
     let [input_step, output_step] = *(steps as *const [isize; 2]);
 
     let [mut input, mut output] = *(args as *mut [*mut T; 2]);
-    if input as usize % mem::align_of::<T>() == 0 && output as usize % mem::align_of::<T>() == 0 {
-        if input_step as usize == mem::size_of::<T>() && output_step as usize == mem::size_of::<T>()
-        {
+    if is_aligned(input) && is_aligned(output) {
+        if is_contiguous::<T>(input_step) && is_contiguous::<T>(output_step) {
             let input = slice::from_raw_parts(input, length);
             let output = slice::from_raw_parts_mut(output, length);
             input
@@ -84,12 +86,8 @@ pub unsafe extern "C" fn abs2_complex<T>(
 
     let mut input = *args as *mut [T; 2];
     let mut output = *args.offset(1) as *mut T;
-    if input as usize % mem::align_of::<[T; 2]>() == 0
-        && output as usize % mem::align_of::<T>() == 0
-    {
-        if input_step as usize == mem::size_of::<[T; 2]>()
-            && output_step as usize == mem::size_of::<T>()
-        {
+    if is_aligned(input) && is_aligned(output) {
+        if is_contiguous::<[T; 2]>(input_step) && is_contiguous::<T>(output_step) {
             let input = slice::from_raw_parts(input, length);
             let output = slice::from_raw_parts_mut(output, length);
             input
