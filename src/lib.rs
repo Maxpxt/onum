@@ -1,11 +1,12 @@
 mod utils;
 #[macro_use]
 mod ufunc;
-mod abconj;
-mod abs2;
-mod cis;
+mod ufuncs;
 
-use crate::{abconj::ABCONJ, abs2::ABS2, cis::CIS, ufunc::ufunc};
+use crate::{
+    ufunc::ufunc,
+    ufuncs::{ABCONJ, ABS2, CIS},
+};
 use pyo3::prelude::*;
 
 #[pymodule]
